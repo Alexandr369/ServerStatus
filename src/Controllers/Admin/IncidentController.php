@@ -6,11 +6,12 @@ use Azuriom\Http\Controllers\Controller;
 use Azuriom\Models\Server;
 use Azuriom\Plugin\ServerStatus\Models\StatusIncident;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class IncidentController extends Controller
 {
     /**
-     * Display the incidents list (automatic outages and admin-created maintenances).
+     * Display the incidents list (automatic outages and admin-created incidents).
      *
      * @return \Illuminate\Http\Response
      */
@@ -23,7 +24,7 @@ class IncidentController extends Controller
     }
 
     /**
-     * Create a scheduled maintenance announcement.
+     * Create a staff-reported incident (maintenance, degraded performance, outage, info).
      *
      * @return \Illuminate\Http\Response
      */
@@ -31,6 +32,7 @@ class IncidentController extends Controller
     {
         $this->validate($request, [
             'server_id' => ['nullable', 'integer', 'exists:servers,id'],
+            'category' => ['required', 'string', Rule::in(StatusIncident::CATEGORIES)],
             'title' => ['required', 'string', 'max:255'],
             'started_at' => ['required', 'date'],
             'resolved_at' => ['nullable', 'date', 'after_or_equal:started_at'],
@@ -39,6 +41,7 @@ class IncidentController extends Controller
         StatusIncident::create([
             'server_id' => $request->input('server_id'),
             'type' => StatusIncident::TYPE_MAINTENANCE,
+            'category' => $request->input('category'),
             'title' => $request->input('title'),
             'started_at' => $request->input('started_at'),
             'resolved_at' => $request->input('resolved_at'),
@@ -56,12 +59,13 @@ class IncidentController extends Controller
     public function update(Request $request, StatusIncident $incident)
     {
         $this->validate($request, [
+            'category' => ['required', 'string', Rule::in(StatusIncident::CATEGORIES)],
             'title' => ['nullable', 'string', 'max:255'],
             'started_at' => ['required', 'date'],
             'resolved_at' => ['nullable', 'date', 'after_or_equal:started_at'],
         ]);
 
-        $incident->update($request->only('title', 'started_at', 'resolved_at'));
+        $incident->update($request->only('category', 'title', 'started_at', 'resolved_at'));
 
         return redirect()->route('serverstatus.admin.incidents')->with('success', trans('admin.settings.updated'));
     }

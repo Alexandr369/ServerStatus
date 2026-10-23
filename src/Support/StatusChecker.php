@@ -48,6 +48,7 @@ class StatusChecker
             $incident = StatusIncident::create([
                 'server_id' => $server->id,
                 'type' => StatusIncident::TYPE_OUTAGE,
+                'category' => StatusIncident::CATEGORY_OUTAGE,
                 'started_at' => now(),
             ]);
 

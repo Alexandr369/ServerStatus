@@ -47,6 +47,22 @@
 
                 <hr>
 
+                <h5>{{ trans('serverstatus::admin.settings.section_banner') }}</h5>
+
+                <div class="mb-3 form-check">
+                    <input class="form-check-input" type="checkbox" id="show_sitewide_banner" name="show_sitewide_banner" @checked($showSitewideBanner)>
+                    <label class="form-check-label" for="show_sitewide_banner">{{ trans('serverstatus::admin.settings.show_sitewide_banner') }}</label>
+                    <div class="form-text">{{ trans('serverstatus::admin.settings.show_sitewide_banner_help') }}</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="maintenance_notice_hours">{{ trans('serverstatus::admin.settings.maintenance_notice_hours') }}</label>
+                    <input type="number" min="0" max="720" class="form-control" id="maintenance_notice_hours" name="maintenance_notice_hours" value="{{ $maintenanceNoticeHours }}">
+                    <div class="form-text">{{ trans('serverstatus::admin.settings.maintenance_notice_hours_help') }}</div>
+                </div>
+
+                <hr>
+
                 <h5>{{ trans('serverstatus::admin.settings.section_discord') }}</h5>
 
                 <div class="mb-3">

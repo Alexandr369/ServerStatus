@@ -6,6 +6,7 @@ return [
     'banner' => [
         'operational' => 'Tous les systèmes sont opérationnels.',
         'incident' => 'Un ou plusieurs services rencontrent un incident.',
+        'details' => 'Voir le statut',
     ],
 
     'servers' => [
@@ -30,7 +31,13 @@ return [
         'upcoming_title' => 'Maintenance à venir',
         'none' => 'Aucun incident enregistré.',
         'all_servers' => 'Tous les serveurs',
-        'outage_default' => 'Coupure sur :server',
-        'maintenance_default' => 'Maintenance programmée sur :server',
+        'category_outage' => 'Panne',
+        'category_degraded' => 'Dégradation de service',
+        'category_maintenance' => 'Maintenance',
+        'category_info' => 'Information',
+        'category_outage_default' => 'Panne sur :server',
+        'category_degraded_default' => 'Dégradation de service sur :server',
+        'category_maintenance_default' => 'Maintenance programmée sur :server',
+        'category_info_default' => 'Information concernant :server',
     ],
 ];

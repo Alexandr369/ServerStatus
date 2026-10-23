@@ -8,12 +8,23 @@
     @endif
 
     <div class="card shadow mb-4">
-        <div class="card-header">{{ trans('serverstatus::admin.incidents.add_maintenance') }}</div>
+        <div class="card-header">{{ trans('serverstatus::admin.incidents.add_incident') }}</div>
         <div class="card-body">
             <form action="{{ route('serverstatus.admin.incidents.store') }}" method="POST" class="row g-2 align-items-end">
                 @csrf
 
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <label class="form-label">{{ trans('serverstatus::admin.incidents.category') }}</label>
+                    <select class="form-select" name="category" required="required">
+                        @foreach (\Azuriom\Plugin\ServerStatus\Models\StatusIncident::CATEGORIES as $category)
+                            <option value="{{ $category }}" @selected($category === 'maintenance')>
+                                {{ trans('serverstatus::messages.incidents.category_'.$category) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
                     <label class="form-label">{{ trans('serverstatus::admin.incidents.server') }}</label>
                     <select class="form-select" name="server_id">
                         <option value="">{{ trans('serverstatus::admin.incidents.all_servers') }}</option>
@@ -23,7 +34,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">{{ trans('serverstatus::admin.incidents.title_field') }}</label>
                     <input type="text" class="form-control" name="title" required="required" maxlength="255">
                 </div>
@@ -54,7 +65,8 @@
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">{{ trans('messages.fields.type') }}</th>
+                            <th scope="col">{{ trans('serverstatus::admin.incidents.category') }}</th>
+                            <th scope="col">{{ trans('serverstatus::admin.incidents.origin') }}</th>
                             <th scope="col">{{ trans('serverstatus::admin.incidents.server') }}</th>
                             <th scope="col">{{ trans('serverstatus::admin.incidents.title_field') }}</th>
                             <th scope="col">{{ trans('serverstatus::admin.incidents.started_at') }}</th>
@@ -65,6 +77,11 @@
                     <tbody>
                         @forelse ($incidents as $incident)
                             <tr>
+                                <td>
+                                    <span class="badge bg-{{ \Azuriom\Plugin\ServerStatus\Models\StatusIncident::categoryColor($incident->categoryOrDefault()) }}">
+                                        {{ trans('serverstatus::messages.incidents.category_'.$incident->categoryOrDefault()) }}
+                                    </span>
+                                </td>
                                 <td>{{ trans('serverstatus::admin.incidents.type_'.$incident->type) }}</td>
                                 <td>{{ $incident->server?->name ?? trans('serverstatus::admin.incidents.all_servers') }}</td>
                                 <td>{{ $incident->title }}</td>
@@ -83,6 +100,7 @@
                                         <form action="{{ route('serverstatus.admin.incidents.update', $incident) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('PUT')
+                                            <input type="hidden" name="category" value="{{ $incident->categoryOrDefault() }}">
                                             <input type="hidden" name="title" value="{{ $incident->title }}">
                                             <input type="hidden" name="started_at" value="{{ $incident->started_at->format('Y-m-d\TH:i') }}">
                                             <input type="hidden" name="resolved_at" value="{{ now()->format('Y-m-d\TH:i') }}">
@@ -103,7 +121,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6">{{ trans('serverstatus::admin.incidents.none') }}</td>
+                                <td colspan="7">{{ trans('serverstatus::admin.incidents.none') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

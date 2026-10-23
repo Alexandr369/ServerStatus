@@ -51,8 +51,11 @@
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <span class="badge bg-info">{{ trans('serverstatus::messages.incidents.upcoming') }}</span>
+                                        <span class="badge bg-{{ \Azuriom\Plugin\ServerStatus\Models\StatusIncident::categoryColor($incident->categoryOrDefault()) }}">
+                                            {{ trans('serverstatus::messages.incidents.category_'.$incident->categoryOrDefault()) }}
+                                        </span>
                                         <strong class="ms-1">
-                                            {{ $incident->title ?? trans('serverstatus::messages.incidents.maintenance_default', ['server' => $incident->server?->name ?? trans('serverstatus::messages.incidents.all_servers')]) }}
+                                            {{ $incident->title ?? trans('serverstatus::messages.incidents.category_'.$incident->categoryOrDefault().'_default', ['server' => $incident->server?->name ?? trans('serverstatus::messages.incidents.all_servers')]) }}
                                         </strong>
                                     </div>
                                     <span class="text-muted small">{{ format_date($incident->started_at, true) }}</span>
@@ -112,8 +115,11 @@
                                     <span class="badge bg-{{ $incident->isOngoing() ? 'danger' : 'secondary' }}">
                                         {{ trans('serverstatus::messages.incidents.'.($incident->isOngoing() ? 'ongoing' : 'resolved')) }}
                                     </span>
+                                    <span class="badge bg-{{ \Azuriom\Plugin\ServerStatus\Models\StatusIncident::categoryColor($incident->categoryOrDefault()) }}">
+                                        {{ trans('serverstatus::messages.incidents.category_'.$incident->categoryOrDefault()) }}
+                                    </span>
                                     <strong class="ms-1">
-                                        {{ $incident->title ?? trans('serverstatus::messages.incidents.'.$incident->type.'_default', ['server' => $incident->server?->name ?? trans('serverstatus::messages.incidents.all_servers')]) }}
+                                        {{ $incident->title ?? trans('serverstatus::messages.incidents.category_'.$incident->categoryOrDefault().'_default', ['server' => $incident->server?->name ?? trans('serverstatus::messages.incidents.all_servers')]) }}
                                     </strong>
                                 </div>
                                 <span class="text-muted small">{{ format_date($incident->started_at) }}</span>
