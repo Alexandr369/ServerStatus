@@ -23,11 +23,15 @@
     </div>
 </div>
 <script>
-    (function () {
+    document.addEventListener('DOMContentLoaded', function () {
         // Shown as a one-time modal instead of a persistent banner: a banner
         // competes for the same screen area as the theme's own navbar (fixed
         // or not), while a modal overlay never collides with it. Once closed,
         // the same incident is remembered as read and won't pop up again.
+        //
+        // Waiting for DOMContentLoaded matters here: the theme loads Bootstrap
+        // with "defer", so "bootstrap" is not defined yet if this script (it
+        // sits right after <body>) ran immediately instead.
         var STORAGE_KEY = 'serverstatus_dismissed_incident';
         var modalEl = document.getElementById('serverstatus-notice-modal');
 
@@ -55,5 +59,5 @@
         });
 
         modal.show();
-    })();
+    });
 </script>
