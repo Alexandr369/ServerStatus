@@ -24,7 +24,7 @@
             <div class="card shadow mb-4">
                 <div class="card-header">{{ trans('serverstatus::messages.servers.title') }}</div>
                 <ul class="list-group list-group-flush">
-                    @forelse ($servers as $data)
+                    @forelse ($statusServers as $data)
                         <li class="list-group-item">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>

@@ -27,7 +27,7 @@ class StatusController extends Controller
         $uptimeCalculator = new UptimeCalculator();
         $windowDays = (int) setting('serverstatus.uptime_window_days', 30);
 
-        $servers = $servers->map(function (Server $server) use ($uptimeCalculator, $windowDays) {
+        $statusServers = $servers->map(function (Server $server) use ($uptimeCalculator, $windowDays) {
             return [
                 'server' => $server,
                 'online' => $server->isOnline(),
@@ -47,8 +47,11 @@ class StatusController extends Controller
 
         $hasOngoingIncident = $incidents->contains(fn (StatusIncident $incident) => $incident->isOngoing());
 
+        // Note: the view variable is "statusServers", not "servers" - the default
+        // theme's layout already shares a global $servers variable of its own
+        // (a server list widget), which would otherwise silently override ours.
         return view('serverstatus::index', [
-            'servers' => $servers,
+            'statusServers' => $statusServers,
             'incidents' => $incidents,
             'hasOngoingIncident' => $hasOngoingIncident,
             'introText' => setting('serverstatus.intro_text'),
