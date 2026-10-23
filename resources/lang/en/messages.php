@@ -6,8 +6,6 @@ return [
     'banner' => [
         'operational' => 'All systems are operational.',
         'incident' => 'One or more services are experiencing an incident.',
-        'details' => 'View status',
-        'understood' => 'Got it',
     ],
 
     'servers' => [

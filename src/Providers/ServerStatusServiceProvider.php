@@ -6,28 +6,10 @@ use Azuriom\Extensions\Plugin\BasePluginServiceProvider;
 use Azuriom\Models\Permission;
 use Azuriom\Plugin\ServerStatus\Console\Commands\CheckServersCommand;
 use Azuriom\Plugin\ServerStatus\Console\Commands\PurgeChecksCommand;
-use Azuriom\Plugin\ServerStatus\Http\Middleware\SitewideBannerMiddleware;
 use Illuminate\Console\Scheduling\Schedule;
 
 class ServerStatusServiceProvider extends BasePluginServiceProvider
 {
-    /**
-     * The plugin's global HTTP middleware stack.
-     */
-    protected array $middleware = [
-        SitewideBannerMiddleware::class,
-    ];
-
-    /**
-     * Register any plugin services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->registerMiddlewares();
-    }
-
     /**
      * Bootstrap any plugin services.
      *

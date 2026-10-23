@@ -30,11 +30,6 @@ return [
         'discord_message_up_default' => ':white_check_mark: **{server}** est de nouveau en ligne.',
         'badges_title' => 'Badges de statut',
         'badges_help' => 'Un badge de statut pour chaque serveur, à coller dans une signature de forum, un profil Discord ou un README.',
-        'section_banner' => 'Fenêtre sur le site',
-        'show_sitewide_banner' => 'Afficher une fenêtre pop-up sur toutes les pages',
-        'show_sitewide_banner_help' => 'Affiche une fenêtre ponctuelle sur tout le site (pas seulement la page de statut) à propos de l\'incident le plus pertinent : une panne en cours, ou une maintenance à venir/en cours. Une fois qu\'un joueur la referme, ce même incident ne lui sera plus réaffiché.',
-        'maintenance_notice_hours' => 'Prévenir des maintenances à venir (heures avant le début)',
-        'maintenance_notice_hours_help' => 'Une maintenance programmée n\'apparaît dans la fenêtre que lorsqu\'elle commence dans ce délai. Mettez 0 pour ne l\'afficher qu\'une fois réellement commencée.',
     ],
 
     'incidents' => [

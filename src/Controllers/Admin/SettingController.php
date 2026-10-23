@@ -32,8 +32,6 @@ class SettingController extends Controller
                 'serverstatus.discord_message_up',
                 trans('serverstatus::admin.settings.discord_message_up_default')
             ),
-            'showSitewideBanner' => (bool) setting('serverstatus.show_sitewide_banner', true),
-            'maintenanceNoticeHours' => (int) setting('serverstatus.maintenance_notice_hours', 24),
         ]);
     }
 
@@ -53,8 +51,6 @@ class SettingController extends Controller
             'discord_webhook' => ['nullable', 'url', 'max:255'],
             'discord_message_down' => ['nullable', 'string', 'max:500'],
             'discord_message_up' => ['nullable', 'string', 'max:500'],
-            'show_sitewide_banner' => ['sometimes', 'string'],
-            'maintenance_notice_hours' => ['required', 'integer', 'min:0', 'max:720'],
         ]);
 
         Setting::updateSettings([
@@ -65,8 +61,6 @@ class SettingController extends Controller
             'serverstatus.discord_webhook' => $request->input('discord_webhook'),
             'serverstatus.discord_message_down' => $request->input('discord_message_down'),
             'serverstatus.discord_message_up' => $request->input('discord_message_up'),
-            'serverstatus.show_sitewide_banner' => $request->input('show_sitewide_banner') === 'on',
-            'serverstatus.maintenance_notice_hours' => $request->input('maintenance_notice_hours'),
         ]);
 
         return redirect()->route('serverstatus.admin.settings')->with('success', trans('admin.settings.updated'));
