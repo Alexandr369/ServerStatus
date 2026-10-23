@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class StatusCheck extends Model
 {
-    public const UPDATED_AT = null;
+    /**
+     * This table only has its own "checked_at" column, no created_at/updated_at.
+     */
+    public $timestamps = false;
 
     protected $table = 'serverstatus_checks';
 
