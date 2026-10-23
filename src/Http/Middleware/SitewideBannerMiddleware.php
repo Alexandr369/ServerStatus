@@ -85,14 +85,18 @@ class SitewideBannerMiddleware
             ->where(function ($query) use ($serverIds) {
                 $query->whereIn('server_id', $serverIds)->orWhereNull('server_id');
             })
+            ->where(function ($query) {
+                // "resolved_at" doubles as a planned end time for a scheduled
+                // maintenance, so it can be in the future without the incident
+                // being actually over yet - see StatusIncident::isActuallyResolved().
+                $query->whereNull('resolved_at')->orWhere('resolved_at', '>', now());
+            })
             ->where(function ($query) use ($noticeHours) {
-                $query->where(function ($ongoing) {
-                    $ongoing->whereNull('resolved_at')->where('started_at', '<=', now());
-                })->orWhere(function ($upcoming) use ($noticeHours) {
-                    $upcoming->whereNull('resolved_at')
-                        ->where('started_at', '>', now())
-                        ->where('started_at', '<=', now()->addHours($noticeHours));
-                });
+                $query->where('started_at', '<=', now())
+                    ->orWhere(function ($upcoming) use ($noticeHours) {
+                        $upcoming->where('started_at', '>', now())
+                            ->where('started_at', '<=', now()->addHours($noticeHours));
+                    });
             })
             ->orderByRaw("type = 'outage' desc")
             ->orderBy('started_at')

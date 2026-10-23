@@ -59,7 +59,7 @@ class StatusIncident extends Model
      */
     public function isOngoing(): bool
     {
-        return $this->resolved_at === null && ! $this->started_at->isFuture();
+        return ! $this->isActuallyResolved() && ! $this->started_at->isFuture();
     }
 
     /**
@@ -67,7 +67,18 @@ class StatusIncident extends Model
      */
     public function isUpcoming(): bool
     {
-        return $this->resolved_at === null && $this->started_at->isFuture();
+        return ! $this->isActuallyResolved() && $this->started_at->isFuture();
+    }
+
+    /**
+     * "resolved_at" doubles as a planned end time when an admin schedules a
+     * maintenance with a known end: in that case it can be in the future,
+     * meaning the incident is not actually over yet, just has a known end.
+     * Only a resolved_at that has already passed means it is truly resolved.
+     */
+    public function isActuallyResolved(): bool
+    {
+        return $this->resolved_at !== null && ! $this->resolved_at->isFuture();
     }
 
     public function isMaintenance(): bool
