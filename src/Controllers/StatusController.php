@@ -6,12 +6,19 @@ use Azuriom\Http\Controllers\Controller;
 use Azuriom\Models\Server;
 use Azuriom\Plugin\ServerStatus\Models\StatusCheck;
 use Azuriom\Plugin\ServerStatus\Models\StatusIncident;
+use Azuriom\Plugin\ServerStatus\Support\DailyUptimeBuilder;
 use Azuriom\Plugin\ServerStatus\Support\MonitoredServers;
 use Azuriom\Plugin\ServerStatus\Support\StatusChecker;
 use Azuriom\Plugin\ServerStatus\Support\UptimeCalculator;
 
 class StatusController extends Controller
 {
+    /**
+     * Number of days shown in the daily status bars, independent of the
+     * admin-configured uptime percentage window.
+     */
+    private const DAILY_BARS_DAYS = 90;
+
     /**
      * Display the public status page.
      *
@@ -25,15 +32,23 @@ class StatusController extends Controller
         $this->refreshStaleChecks($servers);
 
         $uptimeCalculator = new UptimeCalculator();
+        $dailyUptimeBuilder = new DailyUptimeBuilder();
         $windowDays = (int) setting('serverstatus.uptime_window_days', 30);
 
-        $statusServers = $servers->map(function (Server $server) use ($uptimeCalculator, $windowDays) {
+        $statusServers = $servers->map(function (Server $server) use ($uptimeCalculator, $dailyUptimeBuilder, $windowDays) {
+            $latestLatency = StatusCheck::where('server_id', $server->id)
+                ->whereNotNull('latency_ms')
+                ->latest('checked_at')
+                ->first();
+
             return [
                 'server' => $server,
                 'online' => $server->isOnline(),
                 'players' => $server->getOnlinePlayers(),
                 'maxPlayers' => $server->getMaxPlayers(),
                 'uptime' => $uptimeCalculator->percentage($server, $windowDays),
+                'latencyMs' => $latestLatency?->latency_ms,
+                'dailyStatus' => $dailyUptimeBuilder->build($server, self::DAILY_BARS_DAYS),
             ];
         });
 
@@ -41,8 +56,18 @@ class StatusController extends Controller
             ->where(function ($query) use ($serverIds) {
                 $query->whereIn('server_id', $serverIds)->orWhereNull('server_id');
             })
+            ->where('started_at', '<=', now())
             ->latest('started_at')
             ->limit(10)
+            ->get();
+
+        $upcomingMaintenances = StatusIncident::with('server')
+            ->where('type', StatusIncident::TYPE_MAINTENANCE)
+            ->where(function ($query) use ($serverIds) {
+                $query->whereIn('server_id', $serverIds)->orWhereNull('server_id');
+            })
+            ->where('started_at', '>', now())
+            ->oldest('started_at')
             ->get();
 
         $hasOngoingIncident = $incidents->contains(fn (StatusIncident $incident) => $incident->isOngoing());
@@ -53,10 +78,42 @@ class StatusController extends Controller
         return view('serverstatus::index', [
             'statusServers' => $statusServers,
             'incidents' => $incidents,
+            'upcomingMaintenances' => $upcomingMaintenances,
             'hasOngoingIncident' => $hasOngoingIncident,
             'introText' => setting('serverstatus.intro_text'),
             'windowDays' => $windowDays,
         ]);
+    }
+
+    /**
+     * A shields.io status badge for a single server (e.g. for embedding in a
+     * forum signature or a Discord profile). Read-only: it never writes a
+     * check or opens/closes an incident, so it stays cheap no matter how
+     * often it is embedded.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function badge(Server $server)
+    {
+        $online = $server->isOnline();
+
+        $label = $this->shieldsEscape($server->name);
+        $message = $this->shieldsEscape($online
+            ? trans('serverstatus::messages.servers.online')
+            : trans('serverstatus::messages.servers.offline'));
+        $color = $online ? 'brightgreen' : 'red';
+
+        return redirect("https://img.shields.io/badge/{$label}-{$message}-{$color}")
+            ->header('Cache-Control', 'public, max-age=60');
+    }
+
+    /**
+     * Escapes a label/message segment for the shields.io static badge URL
+     * format (dash, underscore and space are significant in that syntax).
+     */
+    private function shieldsEscape(string $value): string
+    {
+        return strtr($value, ['-' => '--', '_' => '__', ' ' => '_']);
     }
 
     /**

@@ -31,9 +31,22 @@ class StatusIncident extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * Whether the incident is currently active: not resolved, and already started.
+     * A scheduled maintenance whose start is still in the future is "upcoming"
+     * instead, see isUpcoming().
+     */
     public function isOngoing(): bool
     {
-        return $this->resolved_at === null;
+        return $this->resolved_at === null && ! $this->started_at->isFuture();
+    }
+
+    /**
+     * Whether this is a maintenance scheduled to start later.
+     */
+    public function isUpcoming(): bool
+    {
+        return $this->resolved_at === null && $this->started_at->isFuture();
     }
 
     public function isMaintenance(): bool

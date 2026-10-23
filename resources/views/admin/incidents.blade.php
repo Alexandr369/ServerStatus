@@ -70,9 +70,13 @@
                                 <td>{{ $incident->title }}</td>
                                 <td>{{ format_date($incident->started_at, true) }}</td>
                                 <td>
-                                    <span class="badge bg-{{ $incident->isOngoing() ? 'danger' : 'secondary' }}">
-                                        {{ trans('serverstatus::messages.incidents.'.($incident->isOngoing() ? 'ongoing' : 'resolved')) }}
-                                    </span>
+                                    @if ($incident->isUpcoming())
+                                        <span class="badge bg-info">{{ trans('serverstatus::messages.incidents.upcoming') }}</span>
+                                    @elseif ($incident->isOngoing())
+                                        <span class="badge bg-danger">{{ trans('serverstatus::messages.incidents.ongoing') }}</span>
+                                    @else
+                                        <span class="badge bg-secondary">{{ trans('serverstatus::messages.incidents.resolved') }}</span>
+                                    @endif
                                 </td>
                                 <td class="text-end">
                                     @if ($incident->isOngoing())

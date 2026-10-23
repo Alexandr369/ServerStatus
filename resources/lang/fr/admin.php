@@ -28,6 +28,8 @@ return [
         'discord_message_help' => 'Utilisez {server} pour insérer le nom du serveur.',
         'discord_message_down_default' => ':warning: **{server}** semble hors ligne.',
         'discord_message_up_default' => ':white_check_mark: **{server}** est de nouveau en ligne.',
+        'badges_title' => 'Badges de statut',
+        'badges_help' => 'Un badge de statut pour chaque serveur, à coller dans une signature de forum, un profil Discord ou un README.',
     ],
 
     'incidents' => [

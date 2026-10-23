@@ -71,4 +71,20 @@
             </form>
         </div>
     </div>
+
+    @if ($servers->isNotEmpty())
+        <div class="card shadow mb-4">
+            <div class="card-header">{{ trans('serverstatus::admin.settings.badges_title') }}</div>
+            <div class="card-body">
+                <p class="text-muted">{{ trans('serverstatus::admin.settings.badges_help') }}</p>
+
+                @foreach ($servers as $server)
+                    <div class="mb-2">
+                        <label class="form-label mb-1">{{ $server->name }}</label>
+                        <input type="text" class="form-control" value="{{ route('serverstatus.badge', $server) }}" readonly="readonly" onclick="this.select()">
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
 @endsection

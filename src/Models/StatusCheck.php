@@ -14,7 +14,7 @@ class StatusCheck extends Model
 
     protected $table = 'serverstatus_checks';
 
-    protected $fillable = ['server_id', 'status', 'players', 'checked_at'];
+    protected $fillable = ['server_id', 'status', 'players', 'latency_ms', 'checked_at'];
 
     protected $casts = [
         'checked_at' => 'datetime',

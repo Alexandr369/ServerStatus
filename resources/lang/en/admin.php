@@ -28,6 +28,8 @@ return [
         'discord_message_help' => 'Use {server} to insert the server name.',
         'discord_message_down_default' => ':warning: **{server}** appears to be down.',
         'discord_message_up_default' => ':white_check_mark: **{server}** is back online.',
+        'badges_title' => 'Status badges',
+        'badges_help' => 'A status badge for each server, ready to embed on a forum signature, a Discord profile or a README.',
     ],
 
     'incidents' => [
