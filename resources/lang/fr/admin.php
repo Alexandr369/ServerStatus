@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'permissions' => [
+        'manage' => 'Gérer les réglages et les incidents de la page de statut',
+    ],
+
+    'nav' => [
+        'title' => 'Statut',
+        'incidents' => 'Incidents',
+        'settings' => 'Réglages',
+    ],
+
+    'settings' => [
+        'title' => 'Réglages de Server Status',
+        'section_servers' => 'Serveurs surveillés',
+        'monitored_servers' => 'Serveurs affichés sur la page de statut',
+        'monitored_servers_help' => 'Si aucun n\'est cochée, tous les serveurs du site sont surveillés par défaut.',
+        'no_servers' => 'Aucun serveur n\'a encore été configuré.',
+        'uptime_window_days' => 'Fenêtre de calcul de la disponibilité (jours)',
+        'check_retention_days' => 'Conserver les contrôles bruts pendant (jours)',
+        'check_retention_days_help' => 'Les incidents sont conservés indéfiniment ; seuls les échantillons bruts utilisés pour rafraîchir la page sont purgés.',
+        'intro_text' => 'Texte d\'introduction (affiché au-dessus de la page de statut)',
+        'section_discord' => 'Notifications Discord',
+        'discord_webhook' => 'URL du webhook Discord',
+        'discord_message_down' => 'Message quand un serveur tombe',
+        'discord_message_up' => 'Message quand un serveur revient',
+        'discord_message_help' => 'Utilisez {server} pour insérer le nom du serveur.',
+        'discord_message_down_default' => ':warning: **{server}** semble hors ligne.',
+        'discord_message_up_default' => ':white_check_mark: **{server}** est de nouveau en ligne.',
+    ],
+
+    'incidents' => [
+        'add_maintenance' => 'Planifier une maintenance',
+        'server' => 'Serveur',
+        'title_field' => 'Titre',
+        'started_at' => 'Début',
+        'resolved_at' => 'Fin',
+        'resolved_at_help' => 'Laissez la fin vide pour une maintenance encore en cours.',
+        'all_servers' => 'Tous les serveurs',
+        'type_outage' => 'Coupure',
+        'type_maintenance' => 'Maintenance',
+        'resolve_now' => 'Résoudre maintenant',
+        'delete_confirm' => 'Supprimer cet incident ?',
+        'none' => 'Aucun incident enregistré.',
+    ],
+];

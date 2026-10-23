@@ -1,0 +1,11 @@
+{
+    "name": "azuriom/serverstatus",
+    "type": "azuriom-plugin",
+    "description": "A public status page for your servers: live availability, uptime percentage and incident history, with Discord alerts.",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Azuriom\\Plugin\\ServerStatus\\": "src/"
+        }
+    }
+}

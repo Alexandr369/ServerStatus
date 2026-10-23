@@ -1,0 +1,15 @@
+{
+    "id": "serverstatus",
+    "name": "Server Status",
+    "description": "A public status page for your servers: live availability, uptime percentage and incident history, with Discord alerts.",
+    "version": "1.0.0",
+    "url": "https://market.azuriom.com/resources/serverstatus",
+    "authors": [
+        "Alexandre"
+    ],
+    "azuriom_api": "1.0.0",
+    "providers": [
+        "\\Azuriom\\Plugin\\ServerStatus\\Providers\\ServerStatusServiceProvider",
+        "\\Azuriom\\Plugin\\ServerStatus\\Providers\\RouteServiceProvider"
+    ]
+}
