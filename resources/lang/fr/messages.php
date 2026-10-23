@@ -7,6 +7,7 @@ return [
         'operational' => 'Tous les systèmes sont opérationnels.',
         'incident' => 'Un ou plusieurs services rencontrent un incident.',
         'details' => 'Voir le statut',
+        'understood' => 'J\'ai compris',
     ],
 
     'servers' => [

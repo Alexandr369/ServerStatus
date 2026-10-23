@@ -5,34 +5,55 @@
         'server' => $incident->server?->name ?? trans('serverstatus::messages.incidents.all_servers'),
     ]);
 @endphp
-<div id="serverstatus-sitewide-banner" class="alert alert-{{ $color }} alert-dismissible fade show rounded-0 mb-0 text-center" role="alert" style="position: fixed; top: 0; left: 0; right: 0; z-index: 10000;">
-    <strong>{{ trans('serverstatus::messages.incidents.category_'.$category) }}</strong> — {{ $label }}
-    <a href="{{ route('serverstatus.index') }}" class="btn btn-sm btn-dark ms-2">{{ trans('serverstatus::messages.banner.details') }}</a>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="modal fade" id="serverstatus-notice-modal" data-incident-id="{{ $incident->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-{{ $color }} text-white">
+                <h5 class="modal-title">{{ trans('serverstatus::messages.incidents.category_'.$category) }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ $label }}
+            </div>
+            <div class="modal-footer">
+                <a href="{{ route('serverstatus.index') }}" class="btn btn-outline-secondary">{{ trans('serverstatus::messages.banner.details') }}</a>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ trans('serverstatus::messages.banner.understood') }}</button>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     (function () {
-        // The theme's own navbar may be fixed/sticky too, so the banner is
-        // forced above everything (fixed + a very high z-index) instead of
-        // relying on its position in the HTML flow, and the page content is
-        // pushed down by the banner's real height to avoid overlapping it.
-        var banner = document.getElementById('serverstatus-sitewide-banner');
+        // Shown as a one-time modal instead of a persistent banner: a banner
+        // competes for the same screen area as the theme's own navbar (fixed
+        // or not), while a modal overlay never collides with it. Once closed,
+        // the same incident is remembered as read and won't pop up again.
+        var STORAGE_KEY = 'serverstatus_dismissed_incident';
+        var modalEl = document.getElementById('serverstatus-notice-modal');
 
-        if (! banner) {
+        if (! modalEl || typeof bootstrap === 'undefined') {
             return;
         }
 
-        var push = function () {
-            document.body.style.marginTop = banner.offsetHeight + 'px';
-        };
+        var incidentId = modalEl.getAttribute('data-incident-id');
+        var dismissedId = null;
 
-        push();
+        try {
+            dismissedId = localStorage.getItem(STORAGE_KEY);
+        } catch (e) {}
 
-        window.addEventListener('resize', push);
+        if (dismissedId === incidentId) {
+            return;
+        }
 
-        banner.addEventListener('closed.bs.alert', function () {
-            document.body.style.marginTop = '';
-            window.removeEventListener('resize', push);
+        var modal = new bootstrap.Modal(modalEl);
+
+        modalEl.addEventListener('hidden.bs.modal', function () {
+            try {
+                localStorage.setItem(STORAGE_KEY, incidentId);
+            } catch (e) {}
         });
+
+        modal.show();
     })();
 </script>

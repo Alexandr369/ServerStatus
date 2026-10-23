@@ -30,11 +30,11 @@ return [
         'discord_message_up_default' => ':white_check_mark: **{server}** is back online.',
         'badges_title' => 'Status badges',
         'badges_help' => 'A status badge for each server, ready to embed on a forum signature, a Discord profile or a README.',
-        'section_banner' => 'Sitewide banner',
-        'show_sitewide_banner' => 'Show a banner on every page',
-        'show_sitewide_banner_help' => 'Shows a dismissible banner about the most relevant incident (an ongoing outage, or an upcoming/ongoing maintenance) on every page of the site, not just the status page.',
+        'section_banner' => 'Sitewide notice',
+        'show_sitewide_banner' => 'Show a pop-up notice on every page',
+        'show_sitewide_banner_help' => 'Shows a one-time pop-up about the most relevant incident (an ongoing outage, or an upcoming/ongoing maintenance) on every page of the site, not just the status page. Once a player closes it, that same incident won\'t pop up again for them.',
         'maintenance_notice_hours' => 'Warn about upcoming maintenance (hours before it starts)',
-        'maintenance_notice_hours_help' => 'A scheduled maintenance only appears in the sitewide banner once it starts within this many hours. Set to 0 to only show it once it has actually started.',
+        'maintenance_notice_hours_help' => 'A scheduled maintenance only appears in the pop-up once it starts within this many hours. Set to 0 to only show it once it has actually started.',
     ],
 
     'incidents' => [
