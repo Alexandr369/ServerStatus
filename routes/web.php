@@ -18,4 +18,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [StatusController::class, 'index'])->name('index');
+Route::get('/history', [StatusController::class, 'history'])->name('history');
 Route::get('/badge/{server}', [StatusController::class, 'badge'])->name('badge');

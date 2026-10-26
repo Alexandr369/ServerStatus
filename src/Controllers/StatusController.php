@@ -53,14 +53,7 @@ class StatusController extends Controller
             ];
         });
 
-        $incidents = StatusIncident::with('server')
-            ->where(function ($query) use ($serverIds) {
-                $query->whereIn('server_id', $serverIds)->orWhereNull('server_id');
-            })
-            ->where('started_at', '<=', now())
-            ->latest('started_at')
-            ->limit(10)
-            ->get();
+        $incidents = $this->incidentsQuery($serverIds)->limit(10)->get();
 
         $upcomingMaintenances = StatusIncident::with('server')
             ->where('type', StatusIncident::TYPE_MAINTENANCE)
@@ -85,6 +78,36 @@ class StatusController extends Controller
             'windowDays' => $windowDays,
             'playerHistoryHours' => self::PLAYER_HISTORY_HOURS,
         ]);
+    }
+
+    /**
+     * Display the full, paginated incident history (the public status page
+     * itself only shows the 10 most recent ones).
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function history()
+    {
+        $serverIds = MonitoredServers::ids();
+
+        return view('serverstatus::history', [
+            'incidents' => $this->incidentsQuery($serverIds)->paginate(20),
+        ]);
+    }
+
+    /**
+     * Past and ongoing incidents for the monitored servers (or sitewide
+     * ones), newest first. Excludes maintenances that haven't started yet,
+     * see $upcomingMaintenances in index() for those.
+     */
+    protected function incidentsQuery(array $serverIds)
+    {
+        return StatusIncident::with('server')
+            ->where(function ($query) use ($serverIds) {
+                $query->whereIn('server_id', $serverIds)->orWhereNull('server_id');
+            })
+            ->where('started_at', '<=', now())
+            ->latest('started_at');
     }
 
     /**

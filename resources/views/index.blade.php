@@ -30,6 +30,12 @@
         }
     </style>
 
+    <script>
+        // Refresh the page periodically so visitors who leave it open see
+        // status changes without having to reload manually.
+        setTimeout(() => window.location.reload(), 60000);
+    </script>
+
     <div class="row justify-content-center">
         <div class="col-lg-9">
             <h1 class="mb-3">{{ trans('serverstatus::messages.title') }}</h1>
@@ -127,25 +133,13 @@
             </div>
 
             <div class="card shadow mb-4">
-                <div class="card-header">{{ trans('serverstatus::messages.incidents.title') }}</div>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>{{ trans('serverstatus::messages.incidents.title') }}</span>
+                    <a href="{{ route('serverstatus.history') }}" class="small">{{ trans('serverstatus::messages.incidents.view_all') }}</a>
+                </div>
                 <ul class="list-group list-group-flush">
                     @forelse ($incidents as $incident)
-                        <li class="list-group-item">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <span class="badge bg-{{ $incident->isOngoing() ? 'danger' : 'secondary' }}">
-                                        {{ trans('serverstatus::messages.incidents.'.($incident->isOngoing() ? 'ongoing' : 'resolved')) }}
-                                    </span>
-                                    <span class="badge bg-{{ \Azuriom\Plugin\ServerStatus\Models\StatusIncident::categoryColor($incident->categoryOrDefault()) }}">
-                                        {{ trans('serverstatus::messages.incidents.category_'.$incident->categoryOrDefault()) }}
-                                    </span>
-                                    <strong class="ms-1">
-                                        {{ $incident->title ?? trans('serverstatus::messages.incidents.category_'.$incident->categoryOrDefault().'_default', ['server' => $incident->server?->name ?? trans('serverstatus::messages.incidents.all_servers')]) }}
-                                    </strong>
-                                </div>
-                                <span class="text-muted small">{{ format_date($incident->started_at) }}</span>
-                            </div>
-                        </li>
+                        @include('serverstatus::partials.incident', ['incident' => $incident])
                     @empty
                         <li class="list-group-item">{{ trans('serverstatus::messages.incidents.none') }}</li>
                     @endforelse

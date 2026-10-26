@@ -95,6 +95,20 @@ class StatusIncident extends Model
     }
 
     /**
+     * How long this incident has lasted: elapsed time so far while ongoing,
+     * or its total length once resolved. Null for a maintenance that hasn't
+     * started yet, since "duration" wouldn't mean anything there.
+     */
+    public function durationForHumans(): ?string
+    {
+        if ($this->isUpcoming()) {
+            return null;
+        }
+
+        return $this->started_at->diffForHumans($this->effectiveEnd(), true, false, 2);
+    }
+
+    /**
      * The incident's category, falling back to "outage" for rows created
      * before categories existed. Named distinctly from the "category"
      * attribute itself to avoid confusing the two.
