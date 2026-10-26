@@ -5,6 +5,8 @@ namespace Azuriom\Plugin\ServerStatus\Support;
 use Azuriom\Models\Server;
 use Azuriom\Plugin\ServerStatus\Models\StatusIncident;
 use Azuriom\Plugin\ServerStatus\Notifications\DiscordNotifier;
+use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 /**
  * Opens/closes the matching outage incident for a server based on its current
@@ -19,7 +21,26 @@ class StatusChecker
         $this->syncIncident($server, $server->isOnline());
     }
 
+    /**
+     * sync() can run concurrently for the same server: once a minute from the
+     * scheduled command, and also from any public page visit. Without a lock,
+     * two overlapping runs could both see "no ongoing incident" and each
+     * create one, doubling the Discord notification for a single outage.
+     */
     protected function syncIncident(Server $server, bool $online): void
+    {
+        $callback = fn () => $this->applyIncidentSync($server, $online);
+
+        try {
+            Cache::lock("serverstatus.sync.{$server->id}", 10)->get($callback);
+        } catch (Throwable $e) {
+            // The cache driver doesn't support atomic locks (e.g. "apc"):
+            // sync without the lock rather than not syncing at all.
+            $callback();
+        }
+    }
+
+    protected function applyIncidentSync(Server $server, bool $online): void
     {
         $incident = StatusIncident::outages()->ongoing()
             ->where('server_id', $server->id)

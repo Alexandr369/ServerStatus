@@ -22,6 +22,12 @@
         .serverstatus-bar-partial { background-color: var(--bs-warning, #ffc107); }
         .serverstatus-bar-major { background-color: var(--bs-danger, #dc3545); }
         .serverstatus-bar-nodata { background-color: var(--bs-secondary-bg, #e9ecef); }
+
+        .serverstatus-sparkline {
+            width: 100%;
+            height: 32px;
+            color: var(--bs-primary, #0d6efd);
+        }
     </style>
 
     <div class="row justify-content-center">
@@ -95,6 +101,24 @@
                                     ></div>
                                 @endforeach
                             </div>
+
+                            @if ($data['playerHistory'] !== null)
+                                <svg
+                                    class="serverstatus-sparkline mt-1"
+                                    viewBox="0 0 100 30"
+                                    preserveAspectRatio="none"
+                                    role="img"
+                                    aria-label="{{ trans('serverstatus::messages.servers.player_history', ['hours' => $playerHistoryHours]) }}"
+                                >
+                                    <polyline
+                                        points="{{ $data['playerHistory']['points'] }}"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                        vector-effect="non-scaling-stroke"
+                                    ></polyline>
+                                </svg>
+                            @endif
                         </li>
                     @empty
                         <li class="list-group-item">{{ trans('serverstatus::messages.servers.none') }}</li>

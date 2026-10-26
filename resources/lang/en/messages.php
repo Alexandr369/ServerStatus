@@ -14,6 +14,7 @@ return [
         'offline' => 'Offline',
         'players' => ':online / :max players',
         'uptime' => ':percent% uptime (:days days)',
+        'player_history' => 'Players over the last :hours hours',
         'none' => 'No server is currently monitored.',
         'day_operational' => 'Operational',
         'day_partial' => 'Partial outage',

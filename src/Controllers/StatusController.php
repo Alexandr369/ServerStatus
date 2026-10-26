@@ -7,6 +7,7 @@ use Azuriom\Models\Server;
 use Azuriom\Plugin\ServerStatus\Models\StatusIncident;
 use Azuriom\Plugin\ServerStatus\Support\DailyUptimeBuilder;
 use Azuriom\Plugin\ServerStatus\Support\MonitoredServers;
+use Azuriom\Plugin\ServerStatus\Support\PlayerHistoryBuilder;
 use Azuriom\Plugin\ServerStatus\Support\StatusChecker;
 use Azuriom\Plugin\ServerStatus\Support\UptimeCalculator;
 
@@ -17,6 +18,11 @@ class StatusController extends Controller
      * admin-configured uptime percentage window.
      */
     private const DAILY_BARS_DAYS = 90;
+
+    /**
+     * Window shown by the player-count sparkline.
+     */
+    private const PLAYER_HISTORY_HOURS = 24;
 
     /**
      * Display the public status page.
@@ -32,9 +38,10 @@ class StatusController extends Controller
 
         $uptimeCalculator = new UptimeCalculator();
         $dailyUptimeBuilder = new DailyUptimeBuilder();
+        $playerHistoryBuilder = new PlayerHistoryBuilder();
         $windowDays = (int) setting('serverstatus.uptime_window_days', 30);
 
-        $statusServers = $servers->map(function (Server $server) use ($uptimeCalculator, $dailyUptimeBuilder, $windowDays) {
+        $statusServers = $servers->map(function (Server $server) use ($uptimeCalculator, $dailyUptimeBuilder, $playerHistoryBuilder, $windowDays) {
             return [
                 'server' => $server,
                 'online' => $server->isOnline(),
@@ -42,6 +49,7 @@ class StatusController extends Controller
                 'maxPlayers' => $server->getMaxPlayers(),
                 'uptime' => $uptimeCalculator->percentage($server, $windowDays),
                 'dailyStatus' => $dailyUptimeBuilder->build($server, self::DAILY_BARS_DAYS),
+                'playerHistory' => $playerHistoryBuilder->build($server, self::PLAYER_HISTORY_HOURS),
             ];
         });
 
@@ -75,6 +83,7 @@ class StatusController extends Controller
             'hasOngoingIncident' => $hasOngoingIncident,
             'introText' => setting('serverstatus.intro_text'),
             'windowDays' => $windowDays,
+            'playerHistoryHours' => self::PLAYER_HISTORY_HOURS,
         ]);
     }
 
