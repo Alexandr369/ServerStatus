@@ -2,7 +2,7 @@
     "id": "serverstatus",
     "name": "Server Status",
     "description": "A public status page for your servers: live availability, uptime percentage and incident history, with Discord alerts.",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "url": "https://market.azuriom.com/resources/serverstatus",
     "authors": [
         "Alexandre"

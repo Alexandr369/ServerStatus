@@ -21,7 +21,6 @@ class SettingController extends Controller
             'servers' => Server::orderBy('name')->get(),
             'monitoredServerIds' => MonitoredServers::ids(),
             'uptimeWindowDays' => (int) setting('serverstatus.uptime_window_days', 30),
-            'checkRetentionDays' => (int) setting('serverstatus.check_retention_days', 90),
             'introText' => setting('serverstatus.intro_text', ''),
             'discordWebhook' => setting('serverstatus.discord_webhook'),
             'discordMessageDown' => setting(
@@ -46,7 +45,6 @@ class SettingController extends Controller
             'monitored_servers' => ['nullable', 'array'],
             'monitored_servers.*' => ['integer', 'exists:servers,id'],
             'uptime_window_days' => ['required', 'integer', 'min:1', 'max:365'],
-            'check_retention_days' => ['required', 'integer', 'min:1', 'max:365'],
             'intro_text' => ['nullable', 'string', 'max:2000'],
             'discord_webhook' => ['nullable', 'url', 'max:255'],
             'discord_message_down' => ['nullable', 'string', 'max:500'],
@@ -56,7 +54,6 @@ class SettingController extends Controller
         Setting::updateSettings([
             'serverstatus.monitored_servers' => json_encode($request->input('monitored_servers', [])),
             'serverstatus.uptime_window_days' => $request->input('uptime_window_days'),
-            'serverstatus.check_retention_days' => $request->input('check_retention_days'),
             'serverstatus.intro_text' => $request->input('intro_text'),
             'serverstatus.discord_webhook' => $request->input('discord_webhook'),
             'serverstatus.discord_message_down' => $request->input('discord_message_down'),

@@ -18,8 +18,6 @@ return [
         'monitored_servers_help' => 'Si aucun n\'est cochée, tous les serveurs du site sont surveillés par défaut.',
         'no_servers' => 'Aucun serveur n\'a encore été configuré.',
         'uptime_window_days' => 'Fenêtre de calcul de la disponibilité (jours)',
-        'check_retention_days' => 'Conserver les contrôles bruts pendant (jours)',
-        'check_retention_days_help' => 'Les incidents sont conservés indéfiniment ; seuls les échantillons bruts utilisés pour rafraîchir la page sont purgés.',
         'intro_text' => 'Texte d\'introduction (affiché au-dessus de la page de statut)',
         'section_discord' => 'Notifications Discord',
         'discord_webhook' => 'URL du webhook Discord',

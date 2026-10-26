@@ -4,7 +4,6 @@ namespace Azuriom\Plugin\ServerStatus\Controllers;
 
 use Azuriom\Http\Controllers\Controller;
 use Azuriom\Models\Server;
-use Azuriom\Plugin\ServerStatus\Models\StatusCheck;
 use Azuriom\Plugin\ServerStatus\Models\StatusIncident;
 use Azuriom\Plugin\ServerStatus\Support\DailyUptimeBuilder;
 use Azuriom\Plugin\ServerStatus\Support\MonitoredServers;
@@ -29,25 +28,19 @@ class StatusController extends Controller
         $serverIds = MonitoredServers::ids();
         $servers = Server::whereIn('id', $serverIds)->get();
 
-        $this->refreshStaleChecks($servers);
+        $this->syncServers($servers);
 
         $uptimeCalculator = new UptimeCalculator();
         $dailyUptimeBuilder = new DailyUptimeBuilder();
         $windowDays = (int) setting('serverstatus.uptime_window_days', 30);
 
         $statusServers = $servers->map(function (Server $server) use ($uptimeCalculator, $dailyUptimeBuilder, $windowDays) {
-            $latestLatency = StatusCheck::where('server_id', $server->id)
-                ->whereNotNull('latency_ms')
-                ->latest('checked_at')
-                ->first();
-
             return [
                 'server' => $server,
                 'online' => $server->isOnline(),
                 'players' => $server->getOnlinePlayers(),
                 'maxPlayers' => $server->getMaxPlayers(),
                 'uptime' => $uptimeCalculator->percentage($server, $windowDays),
-                'latencyMs' => $latestLatency?->latency_ms,
                 'dailyStatus' => $dailyUptimeBuilder->build($server, self::DAILY_BARS_DAYS),
             ];
         });
@@ -117,21 +110,17 @@ class StatusController extends Controller
     }
 
     /**
-     * Refresh any monitored server whose last recorded check is stale, so the
-     * page stays accurate even when the site has no system cron configured
-     * to run the scheduled "serverstatus:check" command.
+     * Sync the incident history for every monitored server, so it stays
+     * accurate even when the site has no system cron configured to run the
+     * scheduled "serverstatus:sync" command. This only reads each server's
+     * already-cached online status (see StatusChecker), never pinging it.
      */
-    protected function refreshStaleChecks($servers): void
+    protected function syncServers($servers): void
     {
         $checker = new StatusChecker();
-        $staleBefore = now()->subMinutes(2);
 
         foreach ($servers as $server) {
-            $latest = StatusCheck::where('server_id', $server->id)->latest('checked_at')->first();
-
-            if ($latest === null || $latest->checked_at->lt($staleBefore)) {
-                $checker->check($server);
-            }
+            $checker->sync($server);
         }
     }
 }

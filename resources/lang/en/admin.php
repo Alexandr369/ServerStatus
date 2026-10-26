@@ -18,8 +18,6 @@ return [
         'monitored_servers_help' => 'If none is checked, every server on the site is monitored by default.',
         'no_servers' => 'No server has been configured yet.',
         'uptime_window_days' => 'Uptime window (days)',
-        'check_retention_days' => 'Keep raw checks for (days)',
-        'check_retention_days_help' => 'Incidents are kept forever; only the raw check samples used to refresh the page are purged.',
         'intro_text' => 'Intro text (shown above the status page)',
         'section_discord' => 'Discord notifications',
         'discord_webhook' => 'Discord webhook URL',

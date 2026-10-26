@@ -3,39 +3,20 @@
 namespace Azuriom\Plugin\ServerStatus\Support;
 
 use Azuriom\Models\Server;
-use Azuriom\Plugin\ServerStatus\Models\StatusCheck;
 use Azuriom\Plugin\ServerStatus\Models\StatusIncident;
 use Azuriom\Plugin\ServerStatus\Notifications\DiscordNotifier;
 
 /**
- * Pings a server, records the sample, and opens/closes the matching outage
- * incident. Shared by the scheduled command and the lazy check-on-visit
- * fallback used when the site has no system cron configured.
+ * Opens/closes the matching outage incident for a server based on its current
+ * status. Reads $server->isOnline(), which is Azuriom core's own cached ping
+ * result (refreshed every minute by the core's "game:ping" schedule), so this
+ * never pings the server itself and never duplicates core's own monitoring.
  */
 class StatusChecker
 {
-    public function check(Server $server): StatusCheck
+    public function sync(Server $server): void
     {
-        // Timed around isOnline() rather than a dedicated ping: since this method
-        // only runs once the previous check is at least 2 minutes old (see
-        // StatusController::refreshStaleChecks() and serverstatus:check), the
-        // core's own 1-minute data cache has normally already expired, so this
-        // measures a real round-trip most of the time rather than a cache hit.
-        $start = microtime(true);
-        $online = $server->isOnline();
-        $latencyMs = (int) round((microtime(true) - $start) * 1000);
-
-        $check = StatusCheck::create([
-            'server_id' => $server->id,
-            'status' => $online ? 'up' : 'down',
-            'players' => $online ? $server->getOnlinePlayers() : null,
-            'latency_ms' => $online ? $latencyMs : null,
-            'checked_at' => now(),
-        ]);
-
-        $this->syncIncident($server, $online);
-
-        return $check;
+        $this->syncIncident($server, $server->isOnline());
     }
 
     protected function syncIncident(Server $server, bool $online): void

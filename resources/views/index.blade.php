@@ -84,9 +84,6 @@
                                         &middot;
                                     @endif
                                     {{ trans('serverstatus::messages.servers.uptime', ['percent' => $data['uptime'], 'days' => $windowDays]) }}
-                                    @if ($data['latencyMs'] !== null)
-                                        &middot; {{ trans('serverstatus::messages.servers.latency', ['ms' => $data['latencyMs']]) }}
-                                    @endif
                                 </div>
                             </div>
 

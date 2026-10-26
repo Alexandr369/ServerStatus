@@ -4,8 +4,7 @@ namespace Azuriom\Plugin\ServerStatus\Providers;
 
 use Azuriom\Extensions\Plugin\BasePluginServiceProvider;
 use Azuriom\Models\Permission;
-use Azuriom\Plugin\ServerStatus\Console\Commands\CheckServersCommand;
-use Azuriom\Plugin\ServerStatus\Console\Commands\PurgeChecksCommand;
+use Azuriom\Plugin\ServerStatus\Console\Commands\SyncServersCommand;
 use Illuminate\Console\Scheduling\Schedule;
 
 class ServerStatusServiceProvider extends BasePluginServiceProvider
@@ -33,15 +32,13 @@ class ServerStatusServiceProvider extends BasePluginServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CheckServersCommand::class,
-                PurgeChecksCommand::class,
+                SyncServersCommand::class,
             ]);
 
             $this->app->booted(function () {
                 $schedule = $this->app->make(Schedule::class);
 
-                $schedule->command('serverstatus:check')->everyMinute();
-                $schedule->command('serverstatus:purge')->daily();
+                $schedule->command('serverstatus:sync')->everyMinute();
             });
         }
     }

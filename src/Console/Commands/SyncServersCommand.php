@@ -7,21 +7,21 @@ use Azuriom\Plugin\ServerStatus\Support\MonitoredServers;
 use Azuriom\Plugin\ServerStatus\Support\StatusChecker;
 use Illuminate\Console\Command;
 
-class CheckServersCommand extends Command
+class SyncServersCommand extends Command
 {
-    protected $signature = 'serverstatus:check';
+    protected $signature = 'serverstatus:sync';
 
-    protected $description = 'Ping the monitored servers and update their status history.';
+    protected $description = 'Sync the incident history against each monitored server\'s current status.';
 
     public function handle(StatusChecker $checker): int
     {
         $servers = Server::whereIn('id', MonitoredServers::ids())->get();
 
         foreach ($servers as $server) {
-            $checker->check($server);
+            $checker->sync($server);
         }
 
-        $this->info("Checked {$servers->count()} server(s).");
+        $this->info("Synced {$servers->count()} server(s).");
 
         return self::SUCCESS;
     }

@@ -3,19 +3,20 @@
 namespace Azuriom\Plugin\ServerStatus\Support;
 
 use Azuriom\Models\Server;
-use Azuriom\Plugin\ServerStatus\Models\StatusCheck;
+use Azuriom\Models\ServerStat;
 use Azuriom\Plugin\ServerStatus\Models\StatusIncident;
 
 /**
  * Builds the day-by-day status bars shown on the public page (one entry per
  * day, newest last): "operational", "partial", "major", or "nodata" for a
- * day that predates the server's first recorded check.
+ * day that predates the server's first core ServerStat record (i.e. before
+ * Azuriom started tracking this server at all).
  */
 class DailyUptimeBuilder
 {
     public function build(Server $server, int $days): array
     {
-        $earliestCheck = StatusCheck::where('server_id', $server->id)->oldest('checked_at')->first();
+        $earliestStat = ServerStat::where('server_id', $server->id)->oldest()->first();
 
         $windowStart = now()->subDays($days)->startOfDay();
 
@@ -33,7 +34,7 @@ class DailyUptimeBuilder
             $dayStart = now()->subDays($i)->startOfDay();
             $dayEnd = $dayStart->copy()->endOfDay();
 
-            if ($earliestCheck === null || $dayStart->lt($earliestCheck->checked_at->copy()->startOfDay())) {
+            if ($earliestStat === null || $dayStart->lt($earliestStat->created_at->copy()->startOfDay())) {
                 $result[] = ['date' => $dayStart, 'status' => 'nodata', 'downtimePercent' => null];
 
                 continue;

@@ -35,12 +35,6 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="check_retention_days">{{ trans('serverstatus::admin.settings.check_retention_days') }}</label>
-                    <input type="number" min="1" max="365" class="form-control" id="check_retention_days" name="check_retention_days" value="{{ $checkRetentionDays }}">
-                    <div class="form-text">{{ trans('serverstatus::admin.settings.check_retention_days_help') }}</div>
-                </div>
-
-                <div class="mb-3">
                     <label class="form-label" for="intro_text">{{ trans('serverstatus::admin.settings.intro_text') }}</label>
                     <textarea class="form-control" id="intro_text" name="intro_text" rows="3">{{ $introText }}</textarea>
                 </div>

@@ -14,7 +14,6 @@ return [
         'offline' => 'Hors ligne',
         'players' => ':online / :max joueurs',
         'uptime' => ':percent% de disponibilité (:days jours)',
-        'latency' => ':ms ms',
         'none' => 'Aucun serveur n\'est actuellement surveillé.',
         'day_operational' => 'Opérationnel',
         'day_partial' => 'Coupure partielle',
